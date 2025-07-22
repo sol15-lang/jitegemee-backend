@@ -30,15 +30,45 @@ class EventsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|string',
+            'image' => 'required||string',
+            'date' => 'required|string',
+            'location' => 'required|string',
+            'category' => 'required|string',
+        ]);
+
+        try {
+            $event = new Events();
+            $event->name = $request->name;
+            $event->image = $request->image;
+            $event->date = $request->date;
+            $event->location = $request->location;
+            $event->category = $request->category;
+            $event->save();
+            return response()->json($event);
+        } catch (\Exception $error) {
+            return response()->json([
+                "Failed" => "Failed to create a event.",
+                $error
+            ], 403);
+        }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Events $events)
+    public function show($id)
     {
-        //
+        try {
+            $events = Events::findOrFail($id);
+            return response()->json($events);
+        } catch (\Exception $error) {
+            return response()->json([
+                "Error" => "Failed to fetch event.",
+                $error
+            ], 500);
+        }
     }
 
     /**
@@ -54,7 +84,31 @@ class EventsController extends Controller
      */
     public function update(Request $request, Events $events)
     {
-        //
+        {
+        $request->validate([
+            'name' => 'required|string',
+            'image' => 'required|string',
+            'date' => 'required|string',
+            'location' => 'required|string',
+            'category' => 'required|string',
+        ]);
+
+        try {
+            $event = Events::findOrFail($events);
+            $event->name = $request->name;
+            $event->image = $request->image;
+            $event->date = $request->date;
+            $event->location = $request->location;
+            $event->category = $request->category;
+            $event->update();
+            return response()->json($event);
+        } catch (\Exception $error) {
+            return response()->json([
+                "Failed" => "Failed to create a event.",
+                $error
+            ], 403);
+        }
+    }
     }
 
     /**

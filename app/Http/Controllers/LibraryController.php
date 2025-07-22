@@ -30,15 +30,42 @@ class LibraryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'title' => 'required|string',
+            'image' => 'required||string',
+            'description' => 'required|string',
+            
+        ]);
+
+        try {
+            $library = new Library();
+            $library->title = $request->title;
+            $library->image = $request->image;
+            $library->description = $request->description;
+            $library->save();
+            return response()->json($library);
+        } catch (\Exception $error) {
+            return response()->json([
+                "Failed" => "Failed to create a library.",
+                $error
+            ], 403);
+        }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Library $library)
+    public function show($id)
     {
-        //
+        try {
+            $library = Library::findOrFail($id);
+            return response()->json($library);
+        } catch (\Exception $error) {
+            return response()->json([
+                "Error" => "Failed to fetch library.",
+                $error
+            ], 500);
+        }
     }
 
     /**
@@ -54,7 +81,27 @@ class LibraryController extends Controller
      */
     public function update(Request $request, Library $library)
     {
-        //
+        {
+        $request->validate([
+            'title' => 'required|string',
+            'image' => 'required|string',
+            'description' => 'required|string',
+        ]);
+
+        try {
+            $library = Library::findOrFail($library);
+            $library->name = $request->name;
+            $library->image = $request->image;
+            $library->description = $request->description;
+            $library->update();
+            return response()->json($library);
+        } catch (\Exception $error) {
+            return response()->json([
+                "Failed" => "Failed to create a library.",
+                $error
+            ], 403);
+        }
+    }
     }
 
     /**
